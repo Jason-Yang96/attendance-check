@@ -62,6 +62,9 @@ public class CsvConverter {
                                     .isAfter(existingParticipant.getLeaveTime())) {
                                 existingParticipant.setLeaveTime(LocalDateTime.parse(rowData.get("leave_time"), DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")));
                             }
+
+                            Integer accumulate = existingParticipant.getDuration() + Integer.parseInt(rowData.get("duration"));
+                            existingParticipant.setDuration(accumulate);
                         }
                     }
                 });
