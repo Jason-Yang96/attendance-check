@@ -1,17 +1,10 @@
 package co.goorm.happiness.attendance.controller;
 
-import co.goorm.happiness.attendance.response.AttendanceErrorResponse;
 import co.goorm.happiness.attendance.response.AttendanceResponse;
 import co.goorm.happiness.attendance.response.dto.ParticipantDto;
 import co.goorm.happiness.attendance.service.AttendanceService;
-import co.goorm.happiness.attendance.utils.CsvConverter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
