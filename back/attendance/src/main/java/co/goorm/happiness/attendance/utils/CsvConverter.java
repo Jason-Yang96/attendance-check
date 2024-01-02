@@ -1,12 +1,13 @@
 package co.goorm.happiness.attendance.utils;
 
+import co.goorm.happiness.attendance.response.dto.ParticipantDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -17,70 +18,36 @@ import java.util.stream.Collectors;
 @Component
 public class CsvConverter {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     private static final List<String> EXCLUDED_KEYS = Arrays.asList("사용자 이메일", "게스트", "대기실");
     private static final List<String> EXCLUDED_NAMES = Arrays.asList("구름", "관리자", "구름관리자");
-    public String fromCsvToJson(List<String > csvList) throws JsonProcessingException {
-//        csvList.removeIf(s -> s.trim().isEmpty());
-//
-//        if (csvList.size() <= 1) {
-//            return "[]";
-//        }
-//
-//        String[] columns = csvList.get(0).split(",");
-//
-//        StringBuilder json = new StringBuilder("[\n");
-//        csvList.subList(1, csvList.size())
-//                .stream()
-//                .map(row -> row.split(","))
-//                .filter(row -> row.length == columns.length)
-//                .forEach(row -> {
-//                    json.append("\t{\n");
-//
-//                    for (int i = 0; i < columns.length; i++) {
-//                        json.append("\t\t\"")
-//                                .append(columns[i])
-//                                .append("\" : \"")
-//                                .append(row[i])
-//                                .append("\",\n");
-//                    }
-//
-//                    json.replace(json.lastIndexOf(","), json.length(), "\n");
-//                    json.append("\t},\n");
-//                });
-//
-//        if (json.lastIndexOf(",") != -1) {
-//            json.replace(json.lastIndexOf(","), json.length(), "\n");
-//        }
-//
-//        json.append("]");
-        //return json.toString();
+    public List<ParticipantDto> fromCsvToJson(List<String > csvList) throws JsonProcessingException {
+
 
         csvList.removeIf(String::isEmpty);
 
         if (csvList.size() <= 1) {
-            return "[]";
+            return List.of();
         }
 
         String[] columns = csvList.get(0).split(",");
 
-        List<Map<String, String>> jsonList = csvList.subList(1, csvList.size())
+        return csvList.subList(1, csvList.size())
                 .stream()
                 .map(row -> row.split(","))
                 .filter(row -> row.length == columns.length)
                 .map(row -> {
                     Map<String, String> rowData = Arrays.stream(columns)
                             .filter(key -> !isExcludedKey(key))
-                            .collect(Collectors.toMap(key -> translateKey(key), key -> preprocessName(key, row[Arrays.asList(columns).indexOf(key)])));
-                    return rowData;
+                            .collect(Collectors.toMap(this::translateKey, key -> preprocessName(key, row[Arrays.asList(columns).indexOf(key)])));
+                    return ParticipantDto.builder()
+                            .name(rowData.get("name"))
+                            .duration(Integer.parseInt(rowData.get("duration")))
+                            .joinTime(LocalDateTime.parse(rowData.get("join_time"), DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")))
+                            .leaveTime(LocalDateTime.parse(rowData.get("leave_time"),  DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")))
+                            .build();
                 })
-                .filter(map -> !isExcludedName(map.get("name")))
+                .filter(dto -> !isExcludedName(dto.getName()))
                 .collect(Collectors.toList());
-
-
-
-        return objectMapper.writeValueAsString(jsonList);
     }
 
     private String preprocessName(String key, String value) {
