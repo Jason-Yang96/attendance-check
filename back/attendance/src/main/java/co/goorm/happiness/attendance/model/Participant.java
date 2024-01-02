@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Data
-@NoArgsConstructor
+@Getter
 public class Participant {
 
     @Id
