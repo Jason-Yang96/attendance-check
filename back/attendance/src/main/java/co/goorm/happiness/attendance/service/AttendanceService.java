@@ -7,12 +7,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,19 +31,32 @@ public class AttendanceService {
      */
     public List<ParticipantDto> csvToJson(InputStream inputStream)  {
         try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-            List<String> csvRows = new BufferedReader(reader).lines().collect(Collectors.toList());
-            if (!csvRows.isEmpty()) {
-                try {
-                    return csvConverter.fromCsvToJson(csvRows);
-
-                } catch (JsonProcessingException e) {
-                    log.error("Error converting CSV to JSON", e);
-                    throw new IOException("Error converting CSV to JSON", e);
-                }
-            }
-            throw new IOException("CSV file is empty");
+            return getParticipantDtos(reader);
         } catch (IOException e) {
             throw new RuntimeException("Something Wrong... I/O");
         }
     }
+
+    public List<ParticipantDto> csvToJson(String filePath) {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8)) {
+            return getParticipantDtos(reader);
+        } catch (IOException e) {
+            throw new RuntimeException("Something Wrong... I/O");
+        }
+    }
+
+    private List<ParticipantDto> getParticipantDtos(InputStreamReader reader) throws IOException {
+        List<String> csvRows = new BufferedReader(reader).lines().collect(Collectors.toList());
+        if (!csvRows.isEmpty()) {
+            try {
+                return csvConverter.fromCsvToJson(csvRows);
+            } catch (JsonProcessingException e) {
+                log.error("Error converting CSV to JSON", e);
+                throw new IOException("Error converting CSV to JSON", e);
+            }
+        }
+        throw new IOException("CSV file is empty");
+    }
+
+
 }
