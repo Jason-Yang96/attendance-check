@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Data
 public class ParticipantDto {
 
-//    @Id
-//    private Long id;
+    @Id
+    private String id;
 
     private String name;
     private Integer duration;
@@ -26,7 +26,7 @@ public class ParticipantDto {
 
     public static ParticipantDto fromEntity(Participant participant) {
         return ParticipantDto.builder()
-//                .id(participant.getId())
+                .id(participant.getId())
                 .name(participant.getName())
                 .duration(participant.getDuration())
                 .joinTime(participant.getJoinTime())
@@ -36,11 +36,13 @@ public class ParticipantDto {
 
     public Participant toEntity() {
         return Participant.builder()
-//                .id(this.id)
+                .id(this.id)
                 .name(this.name)
                 .duration(this.duration)
                 .joinTime(this.joinTime)
                 .leaveTime(this.leaveTime)
                 .build();
     }
+
+
 }
