@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Participant {
 
     @Id
-    private Long id;
+    private String id;
 
     private String name;
     private Integer duration;

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class CsvConverter {
 
     private static final List<String> EXCLUDED_KEYS = Arrays.asList("사용자 이메일", "게스트", "대기실");
-    private static final List<String> EXCLUDED_NAMES = Arrays.asList("구름", "관리자", "구름관리자");
+    private static final List<String> EXCLUDED_NAMES = Arrays.asList("구름", "관리자", "구름관리자", "goorm", "Goorm", "GOORM", "PC");
 
     public List<ParticipantDto> fromCsvToJson(List<String> csvList) throws JsonProcessingException {
         csvList.removeIf(String::isEmpty);

@@ -1,6 +1,8 @@
 package co.goorm.happiness.attendance.controller;
 
+import co.goorm.happiness.attendance.request.dto.AttendanceDataRequestDto;
 import co.goorm.happiness.attendance.response.AttendanceResponse;
+import co.goorm.happiness.attendance.response.dto.AttendanceCheckDto;
 import co.goorm.happiness.attendance.response.dto.ParticipantDto;
 import co.goorm.happiness.attendance.service.AttendanceService;
 import co.goorm.happiness.attendance.utils.CsvConverter;
@@ -24,11 +26,17 @@ import java.util.List;
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
-
     private final ResourceLoader resourceLoader;
-
-    private final CsvConverter csvConverter;
     private static final String CSV_FILE_PATH = "participants_84143883166.csv";
+
+    @PostMapping("/data/meeting")
+    public ResponseEntity<?> processData(@RequestBody AttendanceDataRequestDto request){
+
+        List<ParticipantDto> people = request.getParticipants();
+        List<AttendanceCheckDto> attendanceCheck = attendanceService.checkAttendance(people);
+
+        return ResponseEntity.ok(new AttendanceResponse<>(200, attendanceCheck));
+    }
 
     @GetMapping("/json")
     public ResponseEntity<?> csvToJson() {

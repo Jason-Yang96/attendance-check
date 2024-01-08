@@ -10,9 +10,5 @@
         <module name="attendance.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="attendance.main" target="17" />
-      <module name="attendance.test" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
